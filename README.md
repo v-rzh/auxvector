@@ -37,11 +37,18 @@ of elf parasite code.
 
 ## Usage
 
-Run `make` and you can link the `auxvector.o` with your program. For a 32-bit
-object run `make 32bit=true`.
+### ASM Implementation
+Run `make` and you can link the `auxvector64.o` with your program. For a 32-bit
+object run `make 32bit=true` (it will produce `auxvector32.o`).
+
+The asm version doesn't take any arguments and returns the address of the
+auxiliary vector in `rax` (or `eax` in the 32 bit version).
+
+### C Implementation
+Run `make c=true` and you can link the `auxvector.o` with your program. For a 32-bit
+object run `make c=true 32bit=true`.
 
 Call `get_beg_auxvector()` from your code:
-
 ```c
 struct aux_entry *get_beg_auxvector(unsigned long int rsp, unsigned long int max_stack);
 ```
@@ -61,7 +68,7 @@ You can compile and link these examples with `make test 32bit=true` and
 Both examples will grab the `AT_PHNUM` value and pass it to the `exit` syscall.
 
 ```
-[ab@gibson]$ make test
+[ab@gibson]$ make test c=true
 nasm -o test64.o test64.asm -felf64
 gcc -o auxvector.o auxvector.c -c -Wall -nostdlib -pie -fpic -O3 -D__WORDSIZE=64
 ld -o test.elf test64.o auxvector.o
